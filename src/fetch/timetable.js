@@ -1,4 +1,6 @@
 const { toPronoteWeek } = require('../data/dates');
+const { withId, checkDuplicates } = require('../data/id');
+
 const { getFilledDaysAndWeeks, getTimetable } = require('./pronote/timetable');
 
 async function timetable(session, user, from = new Date(), to = null)
@@ -26,13 +28,15 @@ async function timetable(session, user, from = new Date(), to = null)
         const timetable = await getTimetable(session, user, week);
         const lessons = getTimetableWeek(session, timetable);
 
-        lessons.filter(l => l.from >= from && l.from <= to).forEach(lesson => {
-            if (!filled.filledWeeks.includes(week)) {
-                lesson.isCancelled = true;
-            }
+        if (lessons) {
+            lessons.filter(l => l.from >= from && l.from <= to).forEach(lesson => {
+                if (!filled.filledWeeks.includes(week)) {
+                    lesson.isCancelled = true;
+                }
 
-            result.push(lesson);
-        });
+                result.push(lesson);
+            });
+        }
     }
 
     return result.sort((a, b) => a.from - b.from);
@@ -40,6 +44,9 @@ async function timetable(session, user, from = new Date(), to = null)
 
 function getTimetableWeek(session, table) {
     const result = [];
+    if (!table || !table.lessons) {
+        return
+    }
 
     for (const lesson of table.lessons) {
         const from = lesson.date;
@@ -49,6 +56,7 @@ function getTimetableWeek(session, table) {
             from,
             to,
             isDetention: lesson.isDetention,
+            remoteLesson: lesson.remoteLesson,
             status: lesson.status,
             hasDuplicate: !!table.lessons.find(l => l.date.getTime() === from.getTime() && l !== lesson)
         };
@@ -59,9 +67,15 @@ function getTimetableWeek(session, table) {
             teacher = lesson.content[1];
             room = lesson.content[2];
         } else {
-            subject = lesson.content.find(o => o.type === 16);
-            teacher = lesson.content.find(o => o.type === 3);
-            room = lesson.content.find(o => o.type === 17);
+            if (lesson.content) {
+                subject = lesson.content.find(o => o.type === 16);
+                teacher = lesson.content.find(o => o.type === 3);
+                room = lesson.content.find(o => o.type === 17);
+            } else {
+                subject = 'Non défini';
+                room = 'Non défini';
+                teacher = 'Non défini';
+            }
 
             res.isAway = (lesson.status || false) && !!lesson.status.match(/(.+)?prof(.+)?absent(.+)?/giu);
             res.isCancelled = !res.isAway && lesson.isCancelled;
@@ -72,10 +86,10 @@ function getTimetableWeek(session, table) {
         res.teacher = teacher && teacher.name || null;
         res.room = room && room.name || null;
 
-        result.push(res);
+        result.push(withId(res, ['from', 'to', 'subject']));
     }
 
-    return result;
+    return checkDuplicates(result);
 }
 
 module.exports = timetable;

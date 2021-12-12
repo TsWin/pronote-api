@@ -207,7 +207,7 @@ export class PronoteStudentSession extends PronoteSession
      * @param from La date à partir de laquelle récupérer le contenu des cours. Par défaut la Date actuelle
      * @param to La date jusqu'à laquelle récupérer le contenu des cours. Par défaut 'from' + 1 jour
      *
-     * @return La liste des devoirs situés entre les deux dates données. Si l'onglet du contenu des cours n'est
+     * @return La liste des leçons situés entre les deux dates données. Si l'onglet du contenu des cours n'est
      * pas disponible, `null` sera renvoyé.
      */
     contents(from?: Date, to?: Date): Promise<Array<LessonContent> | null>
@@ -246,6 +246,15 @@ export class PronoteStudentSession extends PronoteSession
      * disponible, `null` sera renvoyé.
      */
     menu(from?: Date, to?: Date): Promise<Array<MenuDay> | null>
+
+    /**
+     * Récupère les fichier publiés sur votre pronote depuis le début de l'années
+     * du plus récent au ancien.
+     *
+     * @return La liste des fichier publiés depuis le début de l'année. Si l'onglet des fichiers n'est pas
+     * disponible, `null` sera renvoyé.
+     */
+    files(): Promise<Array<File> | null>
 }
 
 /**
@@ -387,6 +396,17 @@ export class PronoteParentSession extends PronoteSession
      * disponible, `null` sera renvoyé.
      */
     menu(student: PronoteStudent, from?: Date, to?: Date): Promise<Array<MenuDay> | null>
+
+    /**
+     * Récupère les fichier publiés sur votre pronote depuis le début de l'années
+     * du plus récent au ancien.
+     *
+     * @param student L'élève dont il faut récupérer les menus
+     *
+     * @return La liste des fichier publiés depuis le début de l'année. Si l'onglet des fichiers n'est pas
+     * disponible, `null` sera renvoyé.
+     */
+    files(student: PronoteStudent): Promise<Array<File> | null>
 }
 
 /**
@@ -458,7 +478,9 @@ export const casList: Array<string>;
  */
 export function getCAS(url: string): Promise<string | string[] | null>;
 
-// Données géographiques concernant un établissement.
+/*
+ * Données géographiques concernant un établissement.
+ */
 export interface EtablissementGeoData {
     /**
      * URL Pronote de l'établissement
@@ -585,9 +607,28 @@ export interface PronoteError
 }
 
 /**
+ * Dénote la présence d'un identifiant unique 'id' dans un objet.
+ */
+export interface Identifiable
+{
+    /**
+     * Identifiant unique de l'objet généré à partir du hash des informations considérées comme "propre" à l'objet
+     * (voir la documentation de chaque objet Identifiable pour savoir lesquelles).
+     *
+     * Il est sensé pouvoir identifier chaque objet entre les requêtes : il restera toujours le même après chaque essai.
+     * Cette fonctionnalité ayant été ajoutée récemment, cette affirmation est tout de même à prendre avec précaution.
+     *
+     * Dans le cas où deux objets distincts auraient le même identifiant, ce dernier est modifié en fonction de l'ordre
+     * dans lequel Pronote a renvoyé les objets, pour assurer l'absence d'identifiant en doublon, et sa conservation entre
+     * les requêtes (on considère que l'ordre renvoyé par Pronote est constant).
+     */
+    id: string
+}
+
+/**
  * Leçon de l'emploi du temps.
  */
-export interface Lesson
+export interface Lesson extends Identifiable
 {
     /**
      * Date et horaire précis auquel commence le cours
@@ -612,17 +653,25 @@ export interface Lesson
     hasDuplicate: boolean,
 
     /**
+     * Si c'est un cours qui se déroulera en distanciel, à la maison.
+     */
+    remoteLesson: boolean;
+
+    /**
      * Matière du cours si disponible (pas le cas pour une retenue)
+     * Peut avoir comme valeur 'Non défini' si l'api reçoit un null
      */
     subject?: string,
 
     /**
      * Professeur assigné au cours si disponible (ou surveillant de la retenue)
+     * Peut avoir comme valeur 'Non défini' si l'api reçoit un null
      */
     teacher?: string,
 
     /**
      * Salle du cours si disponible
+     * Peut avoir comme valeur 'Non défini' si l'api reçoit un null
      */
     room?: string,
 
@@ -740,7 +789,7 @@ export interface MarksSubjectAverages
 /**
  * Note obtenue par l'élève
  */
-export interface Mark
+export interface Mark extends Identifiable
 {
 
     /**
@@ -823,7 +872,7 @@ export interface EvaluationsSubject
 /**
  * Évaluation
  */
-export interface Evaluation
+export interface Evaluation extends Identifiable
 {
     /**
      * ID de l'évaluation
@@ -922,7 +971,7 @@ export interface Absences
 /**
  * Absence à un cours
  */
-export interface Absence
+export interface Absence extends Identifiable
 {
     /**
      * Début du premier cours manqué ou lorsque le cours a été quitté
@@ -958,7 +1007,7 @@ export interface Absence
 /**
  * Retard à un cours
  */
-export interface Delay
+export interface Delay extends Identifiable
 {
     /**
      * Date et horaire du cours où le retard a eu lieu
@@ -994,7 +1043,7 @@ export interface Delay
 /**
  * Punition donnée à l'élève
  */
-export interface Punishment
+export interface Punishment extends Identifiable
 {
     /**
      * Date et moment auquel la punition a été donnée
@@ -1040,7 +1089,7 @@ export interface Punishment
 /**
  * Une retenue donnée suite à une punition
  */
-export interface Detention
+export interface Detention extends Identifiable
 {
     /**
      * Date et horaire précis de début de la retenue
@@ -1056,7 +1105,7 @@ export interface Detention
 /**
  * Autre évènement de vie scolaire
  */
-export interface OtherEvent
+export interface OtherEvent extends Identifiable
 {
     /**
      * Type d'évènement (exemple : 'Leçon non apprise')
@@ -1113,7 +1162,7 @@ export interface SubjectAbsences
 /**
  * Information
  */
-export interface Info
+export interface Info extends Identifiable
 {
     /**
      * Date à laquelle l'information a été annoncée
@@ -1149,7 +1198,7 @@ export interface Info
 /**
  * Contenu d'un cours
  */
-export interface LessonContent
+export interface LessonContent extends Identifiable
 {
     /**
      * Matière du cours
@@ -1205,7 +1254,7 @@ export interface LessonContent
 /**
  * Contenu d'un devoir
  */
-export interface Homework
+export interface Homework extends Identifiable
 {
     /**
      * Description du devoir
@@ -1251,8 +1300,16 @@ export interface Homework
 /**
  * Un fichier attaché par exemple à une information, un devoir, ou au contenu d'un cours
  */
-export interface File
+export interface File extends Identifiable
 {
+    /**
+     * Date à laquelle le fichier a été mis en ligne
+     */
+    time: Date,
+    /**
+     * Nom de la matière
+     */
+    subject: string,
     /**
      * Nom du fichier avec son extension
      */
@@ -1333,6 +1390,7 @@ export function fetchInfos(session: PronoteSession): Promise<PronoteInfos>;
 export function fetchContents(session: PronoteSession, fromWeek?: number, toWeek?: number): Promise<PronoteLessonsContents>;
 export function fetchHomeworks(session: PronoteSession, fromWeek?: number, toWeek?: number): Promise<Array<PronoteHomework>>;
 export function fetchMenu(session: PronoteSession, date?: Date): Promise<PronoteMenu>;
+export function fetchFiles(session: PronoteSession);
 
 export function navigate(session: PronoteSession, page: string, tab: number, data?: any): Promise<any>;
 export function keepAlive(session: PronoteSession): Promise<void>;
@@ -1723,6 +1781,7 @@ export interface PronoteLesson extends PronoteObject
     hasHomework: boolean, // AvecTafPublie
     isCancelled: boolean, // estAnnule
     isDetention: boolean // estRetenue
+    remoteLesson: boolean; // dispenseEleve.maison
 }
 
 export interface PronoteTimetableDaysAndWeeks

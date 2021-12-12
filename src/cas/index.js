@@ -8,12 +8,13 @@ const CAS = [
     'ac-nancy-metz', 'ac-nantes', 'ac-orleans-tours', 'ac-poitiers',
     'ac-reims', 'ac-rouen', 'ac-strasbourg', 'ac-toulouse',
 
-    'agora06', 'arsene76',
+    'agora06', 'arsene76', 'atrium-sud',
 
     'haute-garonne', 'hdf', 'iledefrance', 'seine-et-marne', 'somme', 'eure-normandie',
     'parisclassenumerique', 'ljr-munich',
 
-    'toutatice', 'laclasse', 'lyceeconnecte', 'portail-famille',
+    'toutatice', 'laclasse', 'lyceeconnecte', 'portail-famille', 'cybercolleges42',
+    'ac-valdoise', 'ac-lille2', 'moncollege-essonne', 'monbureaunumerique-educonnect',
 
     'none'
 ];
