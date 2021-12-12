@@ -36,7 +36,7 @@
     "pronote-fetch": "bin/fetch.js"
   },
   "bugs": {
-    "url": "https://github.com/Litarvan/pronote-api/issues"
+    "url": "https://github.com/TsWin/pronote-api/issues"
   },
   "dependencies": {
     "axios": "^0.19",
@@ -59,7 +59,7 @@
   "engines": {
     "node": ">=11.14.0"
   },
-  "homepage": "https://github.com/Litarvan/pronote-api#readme",
+  "homepage": "https://github.com/TsWin/pronote-api#readme",
   "keywords": [
     "pronote",
     "api",
@@ -70,7 +70,7 @@
   "main": "index.js",
   "name": "pronote-api",
   "repository": {
-    "url": "git+https://github.com/Litarvan/pronote-api.git",
+    "url": "git+https://github.com/TsWin/pronote-api.git",
     "type": "git"
   },
   "scripts": {
