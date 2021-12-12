@@ -1,4 +1,4 @@
-CE REPO EST UNE COPIE DE LA VERSION 2.2.0 DE [Litarvan/pronote-api](https://github.com/Litarvan/pronote-api/)
+CE REPO EST UNE COPIE DE LA VERSION 2.3.4 DE [Litarvan/pronote-api](https://github.com/Litarvan/pronote-api/)
 
 # Pronote API - LISEZ MOI ABSOLUMENT
 
