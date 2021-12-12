@@ -1,0 +1,85 @@
+{
+  "_args": [
+    [
+      "pronote-api@2.2.0",
+      "/home/container"
+    ]
+  ],
+  "_from": "pronote-api@2.2.0",
+  "_id": "pronote-api@2.2.0",
+  "_inBundle": false,
+  "_integrity": "sha512-cTYeP+GtUyN3ZENNmNO6Jg/m0OqWlc3ndVa+E4/p54xiOQelTB5KylMNyZA3Jyl5UnEbQ2jElpuO+cUuHeoA9Q==",
+  "_location": "/pronote-api",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "pronote-api@2.2.0",
+    "name": "pronote-api",
+    "escapedName": "pronote-api",
+    "rawSpec": "2.2.0",
+    "saveSpec": null,
+    "fetchSpec": "2.2.0"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/pronote-api/-/pronote-api-2.2.0.tgz",
+  "_spec": "2.2.0",
+  "_where": "/home/container",
+  "author": {
+    "name": "Adrien 'Litarvan' Navratil",
+    "email": "adrien1975@live.fr"
+  },
+  "bin": {
+    "pronote-api-server": "bin/server.js",
+    "pronote-fetch": "bin/fetch.js"
+  },
+  "bugs": {
+    "url": "https://github.com/Litarvan/pronote-api/issues"
+  },
+  "dependencies": {
+    "axios": "^0.19",
+    "body-parser": "^1.19.0",
+    "graphql": "^15.3.0",
+    "jsdom": "^16.4.0",
+    "node-forge": "0.6.33",
+    "pako": "^1.0",
+    "polka": "^0.5.2",
+    "string-strip-html": "^5.0.1",
+    "uuid": "^8.3.0"
+  },
+  "description": "Pronote 2020/2021 API (Node.JS/TS library, and GraphQL server)",
+  "devDependencies": {
+    "@types/node-forge": "^0.6",
+    "@types/pako": "^1.0",
+    "eslint": "^7.6.0",
+    "eslint-plugin-node": "^11.1.0"
+  },
+  "engines": {
+    "node": ">=11.14.0"
+  },
+  "homepage": "https://github.com/Litarvan/pronote-api#readme",
+  "keywords": [
+    "pronote",
+    "api",
+    "http",
+    "2020"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "name": "pronote-api",
+  "repository": {
+    "url": "git+https://github.com/Litarvan/pronote-api.git",
+    "type": "git"
+  },
+  "scripts": {
+    "check": "eslint --fix src/* bin/* index.js",
+    "lint": "eslint src/* bin/* index.js",
+    "start": "node ./bin/server.js",
+    "test": "eslint src/* bin* index.js && node ./bin/test.js"
+  },
+  "type": "commonjs",
+  "types": "index.d.ts",
+  "version": "2.2.0"
+}
